@@ -1,13 +1,11 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
+import { H3, Muted } from "@/components/ui/typography";
 
 export default function SignInCard() {
-  const [loading, isLoading] = useState(false);
-
   const handleGoogleSignIn = async () => {
     const data = await authClient.signIn.social({
       provider: "google",
@@ -17,7 +15,10 @@ export default function SignInCard() {
   return (
     <Card className="w-full sm:w-96 mx-auto">
       <CardHeader>
-        <CardTitle>Sign In</CardTitle>
+        <H3>Sign In</H3>
+        <Muted className="font-medium text-md">
+          Use following social provider below
+        </Muted>
       </CardHeader>
       <CardContent>
         <Button onClick={handleGoogleSignIn} className="w-full">

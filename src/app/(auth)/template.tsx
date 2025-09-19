@@ -2,15 +2,17 @@ import ThemeSwitcher from "@/components/theme-switcher-03";
 
 export default function Template({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen relative">
       {/* top bar */}
-      <div className="flex items-center justify-between w-full h-16 px-4">
+      <div className="absolute top-0 z-50 flex items-center justify-between w-full h-16 px-4 bg-background">
         <div></div>
         <ThemeSwitcher />
       </div>
 
       {/* main content */}
-      <div className="flex flex-1 items-center justify-center">{children}</div>
+      <div className="flex items-center justify-center h-[calc(100vh-4rem)]">
+        {children}
+      </div>
     </div>
   );
 }

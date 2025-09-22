@@ -70,7 +70,7 @@ export const teams = pgTable("teams", {
     .references(() => organizations.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at").notNull(),
   updatedAt: timestamp("updated_at").$onUpdate(
-    () => /* @__PURE__ */ new Date(),
+    () => /* @__PURE__ */ new Date()
   ),
 });
 
@@ -120,3 +120,15 @@ export const invitations = pgTable("invitations", {
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
 });
+
+export const schema = {
+  users,
+  sessions,
+  accounts,
+  verifications,
+  teams,
+  teamMembers,
+  organizations,
+  members,
+  invitations,
+};

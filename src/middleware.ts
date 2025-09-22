@@ -9,6 +9,15 @@ export async function middleware(request: NextRequest) {
 
   if (!session) {
     return NextResponse.redirect(new URL("/sign-in", request.url));
+  } else {
+    if (
+      !session.session.activeOrganizationId &&
+      request.nextUrl.pathname !== "/choose-congregation"
+    ) {
+      return NextResponse.redirect(
+        new URL("/choose-congregation", request.url)
+      );
+    }
   }
 
   return NextResponse.next();
@@ -16,5 +25,5 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   runtime: "nodejs",
-  matcher: ["/"],
+  matcher: ["/", "/choose-congregation"],
 };

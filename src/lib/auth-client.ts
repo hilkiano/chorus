@@ -1,11 +1,11 @@
 import { createAuthClient } from "better-auth/react";
 import { ac, user, admin, superadmin } from "@/lib/permissions";
-import { organization } from "better-auth/plugins/organization";
+import { organizationClient } from "better-auth/client/plugins";
 
 export const authClient = createAuthClient({
   baseURL: process.env.BETTER_AUTH_URL,
   plugins: [
-    organization({
+    organizationClient({
       ac,
       roles: {
         user,

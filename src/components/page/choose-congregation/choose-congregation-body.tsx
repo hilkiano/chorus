@@ -45,8 +45,6 @@ export default function ChooseCongregationBody() {
         onOpenChange={setOpen}
         onValueChange={(value) => {
           setValue(value);
-
-          console.log(value);
         }}
         open={open}
         type="congregation"

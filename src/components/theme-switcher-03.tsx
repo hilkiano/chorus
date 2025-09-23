@@ -20,7 +20,7 @@ export default function ThemeSwitcher() {
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
-        <Button size="icon" variant="outline" className="rounded-full">
+        <Button size="icon" variant="outline" className="rounded-full h-8 w-8">
           <SunIcon />
         </Button>
       </DropdownMenuTrigger>

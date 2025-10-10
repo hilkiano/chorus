@@ -11,6 +11,7 @@ export const users = pgTable("users", {
     .defaultNow()
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
+  deletedAt: timestamp("deleted_at"),
 });
 
 export const sessions = pgTable("sessions", {
@@ -70,7 +71,7 @@ export const teams = pgTable("teams", {
     .references(() => organizations.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at").notNull(),
   updatedAt: timestamp("updated_at").$onUpdate(
-    () => /* @__PURE__ */ new Date(),
+    () => /* @__PURE__ */ new Date()
   ),
 });
 

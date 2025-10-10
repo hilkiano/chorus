@@ -1,11 +1,11 @@
 import {
-  Tag,
   Users,
   Settings,
-  Bookmark,
-  SquarePen,
+  Map,
   LayoutGrid,
-  LucideIcon
+  LucideIcon,
+  CircleUserRound,
+  MapPinPen,
 } from "lucide-react";
 
 type Submenu = {
@@ -27,63 +27,79 @@ type Group = {
   menus: Menu[];
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function getMenuList(pathname: string): Group[] {
   return [
     {
       groupLabel: "",
       menus: [
         {
-          href: "/dashboard",
+          href: "/",
           label: "Dashboard",
           icon: LayoutGrid,
-          submenus: []
-        }
-      ]
+          submenus: [],
+        },
+      ],
     },
     {
-      groupLabel: "Contents",
+      groupLabel: "Congregation",
       menus: [
         {
           href: "",
-          label: "Posts",
-          icon: SquarePen,
+          label: "Publishers",
+          icon: CircleUserRound,
           submenus: [
             {
-              href: "/posts",
-              label: "All Posts"
+              href: "/publishers",
+              label: "Publishers List",
             },
             {
-              href: "/posts/new",
-              label: "New Post"
-            }
-          ]
+              href: "/publishers/register",
+              label: "Add Publisher",
+            },
+          ],
         },
         {
-          href: "/categories",
-          label: "Categories",
-          icon: Bookmark
+          href: "",
+          label: "Maps",
+          icon: Map,
+          submenus: [
+            {
+              href: "/maps",
+              label: "Maps List",
+            },
+            {
+              href: "/maps/register",
+              label: "Add Map",
+            },
+          ],
         },
-        {
-          href: "/tags",
-          label: "Tags",
-          icon: Tag
-        }
-      ]
+      ],
     },
     {
-      groupLabel: "Settings",
+      groupLabel: "Application Settings",
       menus: [
         {
           href: "/users",
           label: "Users",
-          icon: Users
+          icon: Users,
         },
         {
           href: "/account",
           label: "Account",
-          icon: Settings
-        }
-      ]
-    }
+          icon: Settings,
+        },
+      ],
+    },
+    {
+      groupLabel: "Tools",
+      menus: [
+        {
+          href: "/map-editor",
+          label: "Map Editor",
+          icon: MapPinPen,
+        },
+      ],
+    },
   ];
 }

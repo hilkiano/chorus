@@ -10,13 +10,13 @@ import { DropdownMenuArrow } from "@radix-ui/react-dropdown-menu";
 import {
   Collapsible,
   CollapsibleContent,
-  CollapsibleTrigger
+  CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-  TooltipProvider
+  TooltipProvider,
 } from "@/components/ui/tooltip";
 import {
   DropdownMenu,
@@ -24,9 +24,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
   DropdownMenuContent,
-  DropdownMenuSeparator
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { usePathname } from "next/navigation";
+import { useAuth } from "../auth-provider";
 
 type Submenu = {
   href: string;
@@ -42,18 +43,35 @@ interface CollapseMenuButtonProps {
   isOpen: boolean | undefined;
 }
 
+function stripSlug(pathname: string) {
+  const parts = pathname.split("/").filter(Boolean);
+  if (parts.length > 1) {
+    return "/" + parts.slice(1).join("/");
+  }
+  return "/";
+}
+
+function isMenuActive(href: string, pathname: string) {
+  const normalizedPath = stripSlug(pathname);
+  return normalizedPath === href || normalizedPath.startsWith(href + "/");
+}
+
 export function CollapseMenuButton({
   icon: Icon,
   label,
-  active,
   submenus,
-  isOpen
+  isOpen,
 }: CollapseMenuButtonProps) {
   const pathname = usePathname();
   const isSubmenuActive = submenus.some((submenu) =>
-    submenu.active === undefined ? submenu.href === pathname : submenu.active
+    submenu.active === undefined
+      ? submenu.href === stripSlug(pathname)
+      : submenu.active
   );
   const [isCollapsed, setIsCollapsed] = useState<boolean>(isSubmenuActive);
+
+  const { auth } = useAuth();
+  const slug = auth.congregation?.slug;
 
   return isOpen ? (
     <Collapsible
@@ -65,10 +83,7 @@ export function CollapseMenuButton({
         className="[&[data-state=open]>div>div>svg]:rotate-180 mb-1"
         asChild
       >
-        <Button
-          variant={isSubmenuActive ? "secondary" : "ghost"}
-          className="w-full justify-start h-10"
-        >
+        <Button variant="ghost" className="w-full justify-start h-10">
           <div className="w-full items-center flex justify-between">
             <div className="flex items-center">
               <span className="mr-4">
@@ -106,14 +121,12 @@ export function CollapseMenuButton({
           <Button
             key={index}
             variant={
-              (active === undefined && pathname === href) || active
-                ? "secondary"
-                : "ghost"
+              isMenuActive(href, pathname) || active ? "secondary" : "ghost"
             }
             className="w-full justify-start h-10 mb-1"
             asChild
           >
-            <Link href={href}>
+            <Link href={`/${slug}${href}`}>
               <span className="mr-4 ml-2">
                 <Dot size={18} />
               </span>
@@ -160,7 +173,7 @@ export function CollapseMenuButton({
               </Button>
             </DropdownMenuTrigger>
           </TooltipTrigger>
-          <TooltipContent side="right" align="start" alignOffset={2}>
+          <TooltipContent side="right" align="center" alignOffset={2}>
             {label}
           </TooltipContent>
         </Tooltip>
@@ -174,8 +187,7 @@ export function CollapseMenuButton({
           <DropdownMenuItem key={index} asChild>
             <Link
               className={`cursor-pointer ${
-                ((active === undefined && pathname === href) || active) &&
-                "bg-secondary"
+                (isMenuActive(href, pathname) || active) && "bg-secondary"
               }`}
               href={href}
             >

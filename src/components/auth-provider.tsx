@@ -7,6 +7,7 @@ type AuthData = {
   user: typeof authClient.$Infer.Session.user | null;
   session: typeof authClient.$Infer.Session.session | null;
   congregation: typeof authClient.$Infer.Organization | null;
+  role: string | null;
 };
 
 type AuthContextType = {

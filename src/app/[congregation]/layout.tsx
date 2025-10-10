@@ -1,4 +1,5 @@
 import { AuthProvider } from "@/components/auth-provider";
+import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
 export default async function AuthLayout({
@@ -10,6 +11,10 @@ export default async function AuthLayout({
   const congregation = (await headers()).get("x-congregation");
   const session = (await headers()).get("x-session");
 
+  const { role } = await auth.api.getActiveMemberRole({
+    headers: await headers(),
+});
+
   if (user && session && congregation) {
     return (
       <AuthProvider
@@ -17,6 +22,7 @@ export default async function AuthLayout({
           user: JSON.parse(user),
           session: JSON.parse(session),
           congregation: JSON.parse(congregation),
+          role: role
         }}
       >
         {children}

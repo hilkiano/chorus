@@ -9,6 +9,16 @@ import { eq } from "drizzle-orm";
 import { teamMembers, members } from "../../auth-schema";
 
 export const auth = betterAuth({
+  user: {
+    additionalFields: {
+      deletedAt: {
+        type: "date",
+        required: false,
+        defaultValue: null,
+        input: false,
+      },
+    },
+  },
   database: drizzleAdapter(db, {
     provider: "pg",
     usePlural: true,
@@ -76,3 +86,5 @@ export const auth = betterAuth({
     }),
   ],
 });
+
+export type User = typeof auth.$Infer.Session.user;

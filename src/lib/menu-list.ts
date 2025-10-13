@@ -27,7 +27,6 @@ type Group = {
   menus: Menu[];
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function getMenuList(pathname: string): Group[] {
   return [
     {
@@ -85,8 +84,8 @@ export function getMenuList(pathname: string): Group[] {
           icon: Users,
         },
         {
-          href: "/account",
-          label: "Account",
+          href: "/personalization",
+          label: "Personalization",
           icon: Settings,
         },
       ],

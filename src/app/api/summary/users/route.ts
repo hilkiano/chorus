@@ -15,11 +15,9 @@ export async function GET() {
     const row = summaryQuery.rows[0];
 
     return NextResponse.json({
-      users: {
-        total: row.total ?? 0,
-        totalActive: row.total_active ?? 0,
-        totalInactive: row.total_inactive ?? 0,
-      },
+      total: row.total ?? 0,
+      totalActive: row.total_active ?? 0,
+      totalInactive: row.total_inactive ?? 0,
     });
   } catch (error) {
     console.error("Error fetching summary:", error);

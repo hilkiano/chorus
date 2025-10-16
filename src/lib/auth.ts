@@ -66,7 +66,6 @@ export const auth = betterAuth({
   },
   socialProviders: {
     google: {
-      prompt: "select_account",
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     },
@@ -88,3 +87,4 @@ export const auth = betterAuth({
 });
 
 export type User = typeof auth.$Infer.Session.user;
+export type Member = typeof auth.$Infer.Member;

@@ -1,12 +1,12 @@
 import { db } from "@/db/drizzle";
-import { users } from "@/db/schema";
+import { members, users } from "@/db/schema";
 import { desc, eq, or, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const page = Number(searchParams.get("page")) || 1;
-  const limit = Number(searchParams.get("limit")) || 10;
+  const limit = Number(searchParams.get("limit")) || 1;
   const filter = searchParams.get("filter") || "";
 
   const offset = (page - 1) * limit;
@@ -16,7 +16,8 @@ export async function GET(req: Request) {
       .from(users)
       .where(
         filter ? or(eq(users.email, filter), eq(users.name, filter)) : undefined
-      );
+      )
+      .leftJoin(members, eq(users.id, members.userId));
 
     const data = await query
       .orderBy(desc(users.createdAt))

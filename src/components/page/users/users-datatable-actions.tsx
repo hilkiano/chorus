@@ -75,27 +75,6 @@ export default function UsersDataTableActions({
     }
   };
 
-  const createNewKey = async () => {
-    if (auth.user) {
-      const response = await fetch("/api/create/key", {
-        method: "PUT",
-        body: JSON.stringify({
-          id: generateRandomString(),
-          userId: auth.user.id,
-          key: generateRandomString(64),
-        }),
-      })
-        .then((res) => res.json())
-        .then((res) => res);
-
-      return response;
-    }
-  };
-
-  const updateKey = useMutation({
-    mutationFn: createNewKey,
-  });
-
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
@@ -144,8 +123,10 @@ export default function UsersDataTableActions({
                           title="Copy"
                           size="icon-xs"
                           onClick={() => {
-                            key !== "" ? copy(key) : undefined;
-                            setCopied(true);
+                            if (key !== "") {
+                              copy(key);
+                              setCopied(true);
+                            }
                           }}
                         >
                           {copied ? <Check /> : <Copy />}
@@ -159,13 +140,6 @@ export default function UsersDataTableActions({
                   </Field>
                 </FieldGroup>
               </FieldSet>
-              <Button
-                disabled={key !== ""}
-                className="self-start"
-                onClick={() => updateKey.mutate()}
-              >
-                Generate API Key
-              </Button>
             </div>
             <DialogFooter>
               <DialogClose asChild>

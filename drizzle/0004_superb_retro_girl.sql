@@ -1,1 +1,0 @@
-ALTER TABLE "api_keys" ADD CONSTRAINT "api_keys_user_id_unique" UNIQUE("user_id");

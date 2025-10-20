@@ -4,9 +4,10 @@ import { db } from "@/db/drizzle";
 import { nextCookies } from "better-auth/next-js";
 import { organization } from "better-auth/plugins";
 import { ac, user, admin, superadmin } from "@/lib/permissions";
-import { schema } from "@/db/schema";
+import { apiKeys, schema } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { teamMembers, members } from "../../auth-schema";
+import { generateRandomString } from "./utils";
 
 export const auth = betterAuth({
   user: {
@@ -25,6 +26,20 @@ export const auth = betterAuth({
     schema,
   }),
   databaseHooks: {
+    user: {
+      create: {
+        after: async (user) => {
+          // Create API key
+          await db.insert(apiKeys).values({
+            id: generateRandomString(),
+            userId: user.id,
+            key: generateRandomString(64),
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          });
+        },
+      },
+    },
     session: {
       create: {
         before: async (sessionData) => {

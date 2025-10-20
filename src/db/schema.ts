@@ -129,6 +129,8 @@ export const apiKeys = pgTable("api_keys", {
     .unique()
     .references(() => users.id, { onDelete: "cascade" }),
   key: text("key").notNull(),
+  createdAt: timestamp("created_at").notNull(),
+  updatedAt: timestamp("updated_at").notNull(),
 });
 
 export const schema = {

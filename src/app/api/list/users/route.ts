@@ -1,5 +1,5 @@
 import { db } from "@/db/drizzle";
-import { members, users } from "@/db/schema";
+import { apiKeys, members, users } from "@/db/schema";
 import { desc, eq, or, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
@@ -18,7 +18,6 @@ export async function GET(req: Request) {
         filter ? or(eq(users.email, filter), eq(users.name, filter)) : undefined
       )
       .leftJoin(members, eq(users.id, members.userId));
-
     const data = await query
       .orderBy(desc(users.createdAt))
       .limit(limit)

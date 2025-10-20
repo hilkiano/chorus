@@ -122,6 +122,15 @@ export const invitations = pgTable("invitations", {
     .references(() => users.id, { onDelete: "cascade" }),
 });
 
+export const apiKeys = pgTable("api_keys", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .unique()
+    .references(() => users.id, { onDelete: "cascade" }),
+  key: text("key").notNull(),
+});
+
 export const schema = {
   users,
   sessions,
@@ -132,4 +141,5 @@ export const schema = {
   organizations,
   members,
   invitations,
+  apiKeys,
 };

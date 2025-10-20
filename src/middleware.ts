@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { db } from "./db/drizzle";
-import { organizations } from "./db/schema";
+import { apiKeys, organizations } from "./db/schema";
 import { eq } from "drizzle-orm";
 
 const PUBLIC_FILE = /\.(.*)$/;
@@ -58,6 +58,16 @@ export async function middleware(request: NextRequest) {
     } else {
       const res = NextResponse.next();
 
+      const qApiKey = await db
+        .select({
+          key: apiKeys.key,
+        })
+        .from(apiKeys)
+        .where(eq(apiKeys.userId, session.user.id))
+        .limit(1);
+
+      const myKey = qApiKey[0];
+
       if (session.session.activeOrganizationId) {
         const [organization] = await db
           .select()
@@ -82,6 +92,7 @@ export async function middleware(request: NextRequest) {
 
       res.headers.set("x-user", JSON.stringify(session.user));
       res.headers.set("x-session", JSON.stringify(session.session));
+      res.headers.set("x-api-key", myKey?.key ?? null);
 
       return res;
     }

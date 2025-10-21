@@ -1,5 +1,5 @@
 import { db } from "@/db/drizzle";
-import { apiKeys, members, users } from "@/db/schema";
+import { members, users } from "@/db/schema";
 import { desc, eq, or, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 

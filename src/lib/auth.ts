@@ -1,15 +1,14 @@
-import { betterAuth } from "better-auth";
+import { betterAuth, BetterAuthOptions } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@/db/drizzle";
 import { nextCookies } from "better-auth/next-js";
-import { organization } from "better-auth/plugins";
-import { ac, user, admin, superadmin } from "@/lib/permissions";
-import { apiKeys, schema } from "@/db/schema";
+import { apiKey, customSession, organization } from "better-auth/plugins";
+import { ac, user, admin, superadmin, owner } from "@/lib/permissions";
+import { schema, teamMembers } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { teamMembers, members } from "../../auth-schema";
-import { generateRandomString } from "./utils";
+import { members, users } from "@/db/schema";
 
-export const auth = betterAuth({
+const options = {
   user: {
     additionalFields: {
       deletedAt: {
@@ -17,6 +16,9 @@ export const auth = betterAuth({
         required: false,
         defaultValue: null,
         input: false,
+      },
+      apiKey: {
+        type: "string",
       },
     },
   },
@@ -29,14 +31,18 @@ export const auth = betterAuth({
     user: {
       create: {
         after: async (user) => {
-          // Create API key
-          await db.insert(apiKeys).values({
-            id: generateRandomString(),
-            userId: user.id,
-            key: generateRandomString(64),
-            createdAt: new Date(),
-            updatedAt: new Date(),
+          const data = await auth.api.createApiKey({
+            body: {
+              userId: user.id,
+              remaining: null,
+            },
           });
+
+          // Update user
+          await db
+            .update(schema.users)
+            .set({ apiKey: data.key })
+            .where(eq(users.id, user.id));
         },
       },
     },
@@ -92,12 +98,45 @@ export const auth = betterAuth({
       roles: {
         user,
         admin,
+        owner,
         superadmin,
       },
       teams: {
         enabled: true,
       },
     }),
+    apiKey({
+      apiKeyHeaders: "x-better-auth-api-key",
+      keyExpiration: {
+        defaultExpiresIn: null,
+      },
+      rateLimit: {
+        enabled: false,
+      },
+    }),
+  ],
+} satisfies BetterAuthOptions;
+
+export const auth = betterAuth({
+  ...options,
+  plugins: [
+    ...(options.plugins ?? []),
+    customSession(async ({ user, session }) => {
+      const qMembers = await db
+        .select({
+          role: members.role,
+        })
+        .from(schema.members)
+        .where(eq(members.userId, user.id))
+        .limit(1);
+
+      const myMember = qMembers[0];
+      return {
+        role: myMember?.role ?? null,
+        user,
+        session,
+      };
+    }, options),
   ],
 });
 

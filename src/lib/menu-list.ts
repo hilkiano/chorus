@@ -7,11 +7,13 @@ import {
   CircleUserRound,
   MapPinPen,
 } from "lucide-react";
+import { PageKey } from "./permission-keys";
 
 type Submenu = {
   href: string;
   label: string;
   active?: boolean;
+  permission?: PageKey | PageKey[];
 };
 
 type Menu = {
@@ -20,6 +22,7 @@ type Menu = {
   active?: boolean;
   icon: LucideIcon;
   submenus?: Submenu[];
+  permission?: PageKey | PageKey[];
 };
 
 type Group = {
@@ -37,6 +40,7 @@ export function getMenuList(pathname: string): Group[] {
           label: "Dashboard",
           icon: LayoutGrid,
           submenus: [],
+          permission: "VIEW_HOMEPAGE",
         },
       ],
     },
@@ -82,11 +86,13 @@ export function getMenuList(pathname: string): Group[] {
           href: "/users",
           label: "Users",
           icon: Users,
+          permission: "VIEW_USERS",
         },
         {
           href: "/personalization",
           label: "Personalization",
           icon: Settings,
+          permission: "VIEW_PERSONALIZATION",
         },
       ],
     },
@@ -97,6 +103,7 @@ export function getMenuList(pathname: string): Group[] {
           href: "/map-editor",
           label: "Map Editor",
           icon: MapPinPen,
+          permission: "VIEW_MAP_EDITOR",
         },
       ],
     },

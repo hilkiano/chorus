@@ -1,4 +1,10 @@
-import { pgTable, text, timestamp, boolean } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  timestamp,
+  boolean,
+  integer,
+} from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: text("id").primaryKey(),
@@ -12,6 +18,7 @@ export const users = pgTable("users", {
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
   deletedAt: timestamp("deleted_at"),
+  apiKey: text("api_key"),
 });
 
 export const sessions = pgTable("sessions", {
@@ -122,15 +129,30 @@ export const invitations = pgTable("invitations", {
     .references(() => users.id, { onDelete: "cascade" }),
 });
 
-export const apiKeys = pgTable("api_keys", {
+export const apikeys = pgTable("apikeys", {
   id: text("id").primaryKey(),
+  name: text("name"),
+  start: text("start"),
+  prefix: text("prefix"),
+  key: text("key").notNull(),
   userId: text("user_id")
     .notNull()
-    .unique()
     .references(() => users.id, { onDelete: "cascade" }),
-  key: text("key").notNull(),
+  refillInterval: integer("refill_interval"),
+  refillAmount: integer("refill_amount"),
+  lastRefillAt: timestamp("last_refill_at"),
+  enabled: boolean("enabled").default(true),
+  rateLimitEnabled: boolean("rate_limit_enabled").default(true),
+  rateLimitTimeWindow: integer("rate_limit_time_window").default(86400000),
+  rateLimitMax: integer("rate_limit_max").default(10),
+  requestCount: integer("request_count").default(0),
+  remaining: integer("remaining"),
+  lastRequest: timestamp("last_request"),
+  expiresAt: timestamp("expires_at"),
   createdAt: timestamp("created_at").notNull(),
   updatedAt: timestamp("updated_at").notNull(),
+  permissions: text("permissions"),
+  metadata: text("metadata"),
 });
 
 export const schema = {
@@ -143,5 +165,5 @@ export const schema = {
   organizations,
   members,
   invitations,
-  apiKeys,
+  apikeys,
 };

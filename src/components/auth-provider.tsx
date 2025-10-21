@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState } from "react";
 import { authClient } from "@/lib/auth-client";
+import { PageKey } from "@/lib/permission-keys";
 
 type AuthData = {
   user: typeof authClient.$Infer.Session.user | null;
@@ -9,6 +10,9 @@ type AuthData = {
   congregation: typeof authClient.$Infer.Organization | null;
   role: string | null;
   apiKey: string | null;
+  permissions: {
+    page: PageKey[];
+  };
 };
 
 type AuthContextType = {

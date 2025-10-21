@@ -2,8 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { db } from "./db/drizzle";
-import { apiKeys, organizations } from "./db/schema";
+import { organizations } from "./db/schema";
 import { eq } from "drizzle-orm";
+import { rolesByName } from "./lib/permissions";
+import { PageKey } from "./lib/permission-keys";
 
 const PUBLIC_FILE = /\.(.*)$/;
 const publicRoute = ["/sign-in"];
@@ -19,6 +21,15 @@ function forceSignOut(request: NextRequest) {
   });
 
   return response;
+}
+
+type RoleName = keyof typeof rolesByName;
+
+function getPermissionsForRole(roleName: RoleName) {
+  const role = rolesByName[roleName];
+  return {
+    page: role.statements.page as PageKey[],
+  };
 }
 
 export async function middleware(request: NextRequest) {
@@ -58,17 +69,9 @@ export async function middleware(request: NextRequest) {
     } else {
       const res = NextResponse.next();
 
-      const qApiKey = await db
-        .select({
-          key: apiKeys.key,
-        })
-        .from(apiKeys)
-        .where(eq(apiKeys.userId, session.user.id))
-        .limit(1);
-
-      const myKey = qApiKey[0];
-
       if (session.session.activeOrganizationId) {
+        const permissions = getPermissionsForRole(session.role as RoleName);
+
         const [organization] = await db
           .select()
           .from(organizations)
@@ -85,14 +88,16 @@ export async function middleware(request: NextRequest) {
           }
 
           res.headers.set("x-congregation", JSON.stringify(organization));
+          res.headers.set("x-permissions", JSON.stringify(permissions));
         } else {
           return forceSignOut(request);
         }
       }
 
       res.headers.set("x-user", JSON.stringify(session.user));
+      res.headers.set("x-role", session.role);
       res.headers.set("x-session", JSON.stringify(session.session));
-      res.headers.set("x-api-key", myKey?.key ?? null);
+      res.headers.set("x-api-key", session.user.apiKey);
 
       return res;
     }

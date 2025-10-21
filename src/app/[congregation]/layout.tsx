@@ -1,8 +1,5 @@
 import { AuthProvider } from "@/components/auth-provider";
-import { db } from "@/db/drizzle";
-import { apiKeys } from "@/db/schema";
 import { auth } from "@/lib/auth";
-import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 
 export default async function AuthLayout({
@@ -11,15 +8,13 @@ export default async function AuthLayout({
   children: React.ReactNode;
 }) {
   const user = (await headers()).get("x-user");
+  const role = (await headers()).get("x-role");
   const congregation = (await headers()).get("x-congregation");
   const session = (await headers()).get("x-session");
   const apiKey = (await headers()).get("x-api-key");
+  const permissions = (await headers()).get("x-permissions");
 
-  const { role } = await auth.api.getActiveMemberRole({
-    headers: await headers(),
-  });
-
-  if (user && session && congregation) {
+  if (user && session && congregation && permissions) {
     return (
       <AuthProvider
         initialAuth={{
@@ -28,6 +23,7 @@ export default async function AuthLayout({
           congregation: JSON.parse(congregation),
           role: role,
           apiKey: apiKey,
+          permissions: JSON.parse(permissions),
         }}
       >
         {children}

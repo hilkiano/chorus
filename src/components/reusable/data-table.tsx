@@ -118,9 +118,9 @@ export function DataTable<TData, TValue>({
                               className={cn(
                                 "truncate",
                                 isPinnedLeft &&
-                                  "sticky left-0 z-10 shadow-md bg-accent/50",
+                                  "sticky left-0 shadow-md bg-muted",
                                 isPinnedRight &&
-                                  "sticky right-0 z-10 shadow-md bg-accent/80"
+                                  "sticky right-0 shadow-md bg-muted"
                               )}
                               style={{ width: `${cell.column.getSize()}px` }}
                               align={cell.column.columnDef.meta?.align}

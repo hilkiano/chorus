@@ -53,9 +53,15 @@ function stripSlug(pathname: string) {
 
 function isMenuActive(href: string, pathname: string) {
   const normalizedPath = stripSlug(pathname);
-  return normalizedPath === href || normalizedPath.startsWith(href + "/");
-}
 
+  const hrefSegments = href.split("/").filter(Boolean);
+  const pathSegments = normalizedPath.split("/").filter(Boolean);
+
+  return (
+    hrefSegments.length === pathSegments.length &&
+    hrefSegments.every((seg, i) => seg === pathSegments[i])
+  );
+}
 export function CollapseMenuButton({
   icon: Icon,
   label,

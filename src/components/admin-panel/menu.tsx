@@ -23,7 +23,7 @@ interface MenuProps {
   isOpen: boolean | undefined;
 }
 
-function stripSlug(pathname: string) {
+function stripOrgSlug(pathname: string): string {
   const parts = pathname.split("/").filter(Boolean);
   if (parts.length > 1) {
     return "/" + parts.slice(1).join("/");
@@ -31,9 +31,13 @@ function stripSlug(pathname: string) {
   return "/";
 }
 
-function isMenuActive(href: string, pathname: string) {
-  const normalizedPath = stripSlug(pathname);
-  return normalizedPath === href || normalizedPath.startsWith(href + "/");
+function isMenuActive(href: string, pathname: string): boolean {
+  const normalizedPath = stripOrgSlug(pathname);
+
+  if (normalizedPath === href) return true;
+  if (href && normalizedPath.startsWith(href + "/")) return true;
+
+  return false;
 }
 
 function hasPagePermission(
@@ -102,7 +106,11 @@ export function Menu({ isOpen }: MenuProps) {
                               <TooltipTrigger asChild>
                                 <Button
                                   asChild
-                                  variant={isActive ? "secondary" : "ghost"}
+                                  variant={
+                                    isMenuActive(href, pathname)
+                                      ? "secondary"
+                                      : "ghost"
+                                  }
                                   className="w-full justify-start h-10 mb-1"
                                 >
                                   <Link href={`/${slug}${href}`}>

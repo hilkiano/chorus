@@ -60,12 +60,8 @@ export default function UsersDataTableActions({
 }: UsersDataTableActionsProps) {
   const [copiedText, copy] = useCopyToClipboard();
   const { auth } = useAuth();
-  const apiKey = auth.apiKey ?? "";
 
   const [open, setOpen] = useState(false);
-  const [key, setKey] = useState(
-    row.original.users.id === auth.user?.id ? apiKey : ""
-  );
   const [copied, setCopied] = useState(false);
 
   const handleDialogOpen = (open: boolean) => {
@@ -74,73 +70,6 @@ export default function UsersDataTableActions({
       setCopied(false);
     }
   };
-
-  const ShowApiKeyAction = () => (
-    <Dialog onOpenChange={(open) => handleDialogOpen(open)}>
-      <DialogTrigger asChild>
-        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-          <Key /> Show API Key
-        </DropdownMenuItem>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>API Key</DialogTitle>
-          <DialogDescription></DialogDescription>
-        </DialogHeader>
-        <div className="flex flex-col gap-4">
-          {auth.user?.email !== row.original.users.email && (
-            <Alert variant="destructive">
-              <AlertTitle className="font-extrabold text-lg">
-                Warning
-              </AlertTitle>
-              <AlertDescription>
-                <p>
-                  This key belongs to user <b>{row.original.users.email}</b>
-                  .
-                  <br />
-                  Use it carefully.
-                </p>
-              </AlertDescription>
-            </Alert>
-          )}
-
-          <FieldSet>
-            <FieldGroup>
-              <Field>
-                <InputGroup>
-                  <InputGroupInput readOnly value={key} />
-                  <InputGroupAddon align="inline-end">
-                    <InputGroupButton
-                      disabled={key === ""}
-                      title="Copy"
-                      size="icon-xs"
-                      onClick={() => {
-                        if (key !== "") {
-                          copy(key);
-                          setCopied(true);
-                        }
-                      }}
-                    >
-                      {copied ? <Check /> : <Copy />}
-                    </InputGroupButton>
-                  </InputGroupAddon>
-                </InputGroup>
-
-                <FieldDescription>
-                  Use this key for your API request header.
-                </FieldDescription>
-              </Field>
-            </FieldGroup>
-          </FieldSet>
-        </div>
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="outline">Close</Button>
-          </DialogClose>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>

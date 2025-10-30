@@ -97,7 +97,6 @@ export async function middleware(request: NextRequest) {
       res.headers.set("x-user", JSON.stringify(session.user));
       res.headers.set("x-role", session.role);
       res.headers.set("x-session", JSON.stringify(session.session));
-      res.headers.set("x-api-key", session.user.apiKey);
 
       return res;
     }

@@ -9,7 +9,6 @@ type AuthData = {
   session: typeof authClient.$Infer.Session.session | null;
   congregation: typeof authClient.$Infer.Organization | null;
   role: string | null;
-  apiKey: string | null;
   permissions: {
     page: PageKey[];
   };
